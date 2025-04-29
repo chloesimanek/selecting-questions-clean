@@ -54,12 +54,12 @@ def create_parser():
         params.n_question = 26688
         params.train_batch_size = 128
         params.test_batch_size = 512
-        params.n_epoch = 5000
+        params.n_epoch = 1000
         params.wait = 250
         params.repeat = 10
     if params.dataset == 'ednet':
         params.n_question = 13169
-        params.n_epoch = 500
+        params.n_epoch = 100
         params.train_batch_size = 200
         params.test_batch_size = 512
         params.wait = 25

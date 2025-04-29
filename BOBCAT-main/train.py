@@ -1,5 +1,7 @@
 import numpy as np
 import torch
+import sys 
+import time
 import os
 from dataset import Dataset, collate_fn
 from utils.utils import compute_auc, compute_accuracy, data_split, batch_accuracy
@@ -217,13 +219,22 @@ def train_model():
     print('Test_Epoch: {}; val_scores: {}; val_aucs: {}; test_scores: {}; test_aucs: {}'.format(
         epoch, val_scores, val_aucs, test_scores, test_aucs))
     if params.neptune:
-        neptune.log_metric('Valid Accuracy', val_score)
-        neptune.log_metric('Best Test Accuracy', best_test_score)
-        neptune.log_metric('Best Test Auc', best_test_auc)
-        neptune.log_metric('Best Valid Accuracy', best_val_score)
-        neptune.log_metric('Best Valid Auc', best_val_auc)
-        neptune.log_metric('Best Epoch', best_epoch)
-        neptune.log_metric('Epoch', epoch)
+        run["Valid Accuracy"].log(val_score)
+        run["Best Test Accuracy"].log(best_test_score)
+        run["Best Test Auc"].log(best_test_auc)
+        run["Best Valid Accuracy"].log(best_val_score)
+        run["Best Valid Auc"].log(best_val_auc)
+        run["Best Epoch"].log(best_epoch)
+        run["Epoch"].log(epoch)
+    # CHANGED - old neptune version
+    # if params.neptune:
+    #     neptune.log_metric('Valid Accuracy', val_score)
+    #     neptune.log_metric('Best Test Accuracy', best_test_score)
+    #     neptune.log_metric('Best Test Auc', best_test_auc)
+    #     neptune.log_metric('Best Valid Accuracy', best_val_score)
+    #     neptune.log_metric('Best Valid Auc', best_val_auc)
+    #     neptune.log_metric('Best Epoch', best_epoch)
+    #     neptune.log_metric('Epoch', epoch)
 
 
 def test_model(id_, split='val'):
@@ -260,17 +271,37 @@ def test_model(id_, split='val'):
 
 if __name__ == "__main__":
     params = create_parser()
+
+    # save logs
+
+    # os.makedirs("logs", exist_ok=True)
+    # timestamp = time.strftime("%Y%m%d-%H%M%S")
+    # log_filename = f"logs/{params.model}_{params.dataset}_{timestamp}.log"
+    # sys.stdout = open(log_filename, "w")
+    # sys.stderr = sys.stdout
+
+    # print(f"Logging to {log_filename}")
+
     print(params)
     if params.use_cuda:
         assert device.type == 'cuda', 'no gpu found!'
 
     if params.neptune:
         import neptune
-        project = "arighosh/bobcat"
-        neptune.init(project_qualified_name=project,
-                     api_token=os.environ["NEPTUNE_API_TOKEN"])
-        neptune_exp = neptune.create_experiment(
-            name=params.file_name, send_hardware_metrics=False, params=vars(params))
+        project = "chloesimanek/BOBCAT"
+        run = neptune.init_run(
+            project=project,
+            api_token=os.environ["NEPTUNE_API_TOKEN"],
+            name=params.model,
+            tags=[params.model, params.dataset],
+            source_files=[],
+        )
+        # CHANGED - old neptune version
+        # project = "arighosh/bobcat"
+        # neptune.init(project_qualified_name=project,
+        #              api_token=os.environ["NEPTUNE_API_TOKEN"])
+        # neptune_exp = neptune.create_experiment(
+        #     name=params.file_name, send_hardware_metrics=False, params=vars(params))
 
     config = {}
     initialize_seeds(params.seed)
@@ -293,8 +324,10 @@ if __name__ == "__main__":
     meta_params_optimizer = torch.optim.SGD(
         meta_params, lr=params.meta_lr, weight_decay=2e-6, momentum=0.9)
     if params.neptune:
-        neptune_exp.log_text(
-            'model_summary', repr(model))
+        run["model/summary"] = str(model)
+        # CHANGED - old neptune version
+        # neptune_exp.log_text(
+        #     'model_summary', repr(model))
     print(model)
 
     #
@@ -306,15 +339,17 @@ if __name__ == "__main__":
         ppo_policy = PPO(params.n_question, params.n_question,
                          params.policy_lr, betas, K_epochs, eps_clip)
         if params.neptune:
-            neptune_exp.log_text(
-                'ppo_model_summary', repr(ppo_policy.policy))
+            run["ppo_model/summary"] = str(ppo_policy.policy)
+            # neptune_exp.log_text(
+            #     'ppo_model_summary', repr(ppo_policy.policy))
     if sampling == 'biased':
         betas = (0.9, 0.999)
         st_policy = StraightThrough(params.n_question, params.n_question,
                                     params.policy_lr, betas)
         if params.neptune:
-            neptune_exp.log_text(
-                'biased_model_summary', repr(st_policy.policy))
+            run["biased_model/summary"] = str(st_policy.policy)
+            # neptune_exp.log_text(
+            #     'biased_model_summary', repr(st_policy.policy))
 
     #
     data_path = os.path.normpath('data/train_task_'+params.dataset+'.json')

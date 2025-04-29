@@ -1,0 +1,13 @@
+# set up
+
+# Create virtual env: python3 -m venv venv
+# Activate: source venv/bin/activate from BOBCAT-main
+
+# Install reqs:
+    # pip install --upgrade pip
+    # pip install -r requirements.txt
+
+# API Token
+    # export NEPTUNE_API_TOKEN=
+
+# python train.py --dataset assist2009 --model biirt-active --n_query 5  --neptune
