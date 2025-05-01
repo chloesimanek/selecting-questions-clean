@@ -3,3 +3,20 @@ venv/
 
 # Ignore datafiles 
 
+# Large EEDI and response data files
+eedi-data/answer_metadata_task_1_2.csv
+eedi-data/train_task_1_2.csv
+eedi-data/answer_metadata_task_3_4.csv
+eedi-data/train_task_3_4.csv
+eedi-data/question_embeddings.csv
+eedi-data/mathbert_embeddings.csv
+eedi-data/student_metadata_task_1_2.csv
+eedi-data/question_metadata_task_1_2.csv
+eedi-data/student_metadata_task_3_4.csv
+eedi-data/question_metadata_task_3_4.csv
+eedi-data/subject_metadata.csv
+responses-data/oracle_responses_df.csv
+responses-data/oracle_dataset.csv
+responses-data/oracle_student_df.csv
+
+
