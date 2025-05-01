@@ -1,11 +1,9 @@
-# eedi data
-*/data/
+# data
 *.csv
+*.json
+*.pkl
 eedi-data/*.csv
 responses-data/*.csv
-*.pkl
-*.json
-
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,29 @@
+instructions to run BOBCAT training 
+
+BEFORE 
+
+adding data files
+    - update git ignore 
+        - DO NOT try to push data to repository
+    - add files 
+    - git status to make sure data isn't staged for a commit 
+
+virtual environment
+    - create: - python3 -m venv venv
+    - activate: - source venv/bin/activate (from BOBCAT-main)
+
+instal requirements (reqs.txt)
+    - pip install --upgrade pip
+    - pip install -r reqs.txt
+
+get API token from Neptune 
+    - export NEPTUNE_API_TOKEN= (terminal)
+
+RUN
+
+run training (terminal)
+    - e.g. python train.py --dataset assist2009 --model biirt-active --n_query 5 --neptune
+
+AFTER
+
+push 
