@@ -2,7 +2,7 @@
 *.csv
 *.json
 *.pkl
-eedi-data/*.csv
+eedi/*.csv
 responses-data/*.csv
 
 # Byte-compiled / optimized / DLL files
