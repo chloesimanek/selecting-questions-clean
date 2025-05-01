@@ -3,7 +3,7 @@ import json
 import os
 
 # Load the clean oracle dataset
-df = pd.read_csv('../synthetic/oracle_dataset.csv')  
+df = pd.read_csv('../../synthetic/oracle_dataset.csv')  
 
 # Group data by user
 user_data = []
