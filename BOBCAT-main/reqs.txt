@@ -1,3 +1,4 @@
 torch==2.7.0
 neptune-client
 numpy
+# add ski-kit-learn

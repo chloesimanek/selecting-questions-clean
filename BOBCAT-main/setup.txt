@@ -1,13 +1,24 @@
-# set up
+Instructions to set up and run code
 
-# Create virtual env: python3 -m venv venv
-# Activate: source venv/bin/activate from BOBCAT-main
+BEFORE
 
-# Install reqs:
-    # pip install --upgrade pip
-    # pip install -r requirements.txt
+1. Add data files (can't push these to repository)
+2. Create virtual env:
+    - python3 -m venv venv
+3. Activate virtual environment:
+    - source venv/bin/activate from BOBCAT-main
+4. Install reqs:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+5. Get API token from Neptune and put in train.py
+    - export NEPTUNE_API_TOKEN=
 
-# API Token
-    # export NEPTUNE_API_TOKEN=
+RUN
 
-# python train.py --dataset assist2009 --model biirt-active --n_query 5  --neptune
+1. Run training
+    - e.g. python train.py --dataset assist2009 --model biirt-active --n_query 5 --neptune
+
+AFTER
+
+1. Delete data
+2. Push

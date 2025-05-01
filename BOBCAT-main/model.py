@@ -81,9 +81,9 @@ class MAMLModel(nn.Module):
 
     def pick_sample(self,sampling, config):
         if sampling == 'random':
-            train_mask = pick_random_sample(
-                config['available_mask'], self.n_query, self.n_question)
-            config['train_mask'] = train_mask
+            train_mask = pick_random_sample( # questions we are doing to train
+                config['available_mask'], self.n_query, self.n_question) # what questions are available, number of questions, and "largest" questions
+            config['train_mask'] = train_mask # config dictionary 
             return train_mask
 
         elif sampling == 'active':
@@ -92,6 +92,11 @@ class MAMLModel(nn.Module):
             action = self.pick_uncertain_sample(student_embed, config['available_mask'])
             config['train_mask'][range(n_student), action], config['available_mask'][range(n_student), action] = 1, 0
             return action
+        
+        # ORACLE
+
+        # elif sampling == 'oracle'
+        # ...
         
 
     def forward(self, batch, config):

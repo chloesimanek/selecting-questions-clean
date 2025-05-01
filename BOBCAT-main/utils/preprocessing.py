@@ -14,6 +14,7 @@ abcd_map = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
 question_meta, subject_metadata, df, question_meta_1, question_meta_3, = {}, {}, {}, {}, {}
 
 
+# reading in csv
 def process_question(infile, outfile):
     data = {}
     with open(infile, 'r') as fp:
@@ -26,7 +27,7 @@ def process_question(infile, outfile):
             data[str(q_id)] = {'subjects': subjects}
     return data
 
-
+# child-parent relationship between subjects 
 def child_map(question_data):
     global subject_metadata
     max_q = 0
@@ -61,7 +62,7 @@ def child_map(question_data):
     print(max_q)
     return question_data
 
-
+# csv to json with processed questions and mapping
 def convert_questions():
     global question_meta_1, question_meta_3
     input_data = 'data/question_metadata_task_1_2.csv'
@@ -81,7 +82,7 @@ def convert_questions():
         dump_json(output_data, question_meta_3)
     return question_meta_1, question_meta_3
 
-
+# csv to json of metadata 
 def convert_subjects():
     file_name = 'data/subject_metadata.csv'
     output_data = 'data/subject_metadata.json'
@@ -115,7 +116,7 @@ def convert_subjects():
     dump_json(output_data, data)
     return open_json(output_data)
 
-
+# for a single user, has sequence of questions and answers, subject, times
 def f(user_id):
     global df, question_metadata
     user_df = df[df.UserId == user_id].sort_values('DateAnswered')
@@ -139,7 +140,7 @@ def f(user_id):
            'ans': ans, 'labels': labels, 'times': times}
     return out
 
-
+# combines for final training data
 def featurize(dataset):
     global question_meta_1, question_meta_3, question_metadata, subject_metadata, df
     if dataset == '1_2':

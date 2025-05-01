@@ -171,10 +171,10 @@ def simulate_responses(num_student, question_per_student, question_df, skill_dis
     df_final = finalize_result(df_p_correct, num_student)
 
     return df_final, df_student
-
-def load_eedi_df(metadata_file='/home/simanekc/selecting-questions-personal/data/eedi/question_metadata_task_3_4.csv', 
-                 questions_file='/home/simanekc/selecting-questions-personal/data/eedi/question_embeddings.csv',
-                 embeddings_file='data/eedi/mathbert_embeddings.csv'):
+ 
+def load_eedi_df(metadata_file='eedi-data\question_metadata_task_3_4.csv',  
+                 questions_file='eedi-data\question_embeddings.csv',
+                 embeddings_file='eedi-data\mathbert_embeddings.csv'):
     '''
     Load a df with all questions from the eedi data for which we have question embeddings,
     and generate random difficulties for each question. Return the df, which will also
@@ -242,13 +242,13 @@ def eedi_simulation(num_students=50000, min_questions_per_skill=20, max_question
     print("Number of unique skills: ", df['skill'].nunique())
     
     simulate_and_save(df, 'responses',
-                       num_students=50000, 
+                      num_students=50000, 
                       min_questions_per_skill=20, 
                       max_questions_per_skill=110, 
                       max_overall_skills=5,
                       questions_per_student=100,
                       skill_distribution='normal')
-   
+
 
 def simulate_and_save(question_df, output_directory, 
                       num_students=50000, 
@@ -274,15 +274,56 @@ def gpt_simulation(num_students=50000, min_questions_per_skill=20, max_questions
     print("Number of unique skills: ", df['skill'].nunique())
     
     simulate_and_save(df, '../simulated_responses/gpt_randn/',
-                       num_students=50000, 
+                      num_students=50000, 
                       min_questions_per_skill=20, 
                       max_questions_per_skill=120, 
                       max_overall_skills=5,
                       questions_per_student=100,
                       skill_distribution='normal')
+
+def eedi_oracle_simulation(num_students=500, min_questions_per_skill=20, max_questions_per_skill=110, max_overall_skills=5):
     
+    df = load_eedi_df()
+    print("Number of unique skills: ", df['skill'].nunique())
+    
+    simulate_oracle_and_save(df, 'responses',
+                      num_students=500, 
+                      min_questions_per_skill=20, 
+                      max_questions_per_skill=110, 
+                      max_overall_skills=5,
+                      questions_per_student=100,
+                      skill_distribution='normal')
+
+def simulate_oracle_and_save(question_df, output_directory, 
+                             num_students=500, 
+                             min_questions_per_skill=20, 
+                             max_questions_per_skill=110, 
+                             max_overall_skills=5,
+                             questions_per_student=100,
+                             skill_distribution='normal'):
+    
+    df = filter_skills(question_df, min_questions_per_skill=min_questions_per_skill, 
+                       max_questions_per_skill=max_questions_per_skill, 
+                       max_overall_skills=max_overall_skills)
+    skills_to_include = df['skill'].unique()
+    
+    df_responses, df_student = simulate_responses(num_students, questions_per_student, df, skill_distribution, skill_list=skills_to_include)
+    Path(f'{output_directory}').mkdir(parents=True, exist_ok=True)
+
+    save_clean_oracle_data(df_responses, f'{output_directory}/oracle_dataset.csv')
+
+    df_responses.to_csv(f'{output_directory}/oracle_responses_df.csv', index=False)
+    df_student.to_csv(f'{output_directory}/oracle_student_df.csv', index=False)
+
+# Filter for the columns you need
+def save_clean_oracle_data(df_responses, output_file='oracle_dataset.csv'):
+    df_clean = df_responses[['studentid', 'itemid', 'item_difficulty', 'student_skill_level', 'correct']]
+    df_clean.to_csv(output_file, index=False)
+    print(f"Saved clean oracle dataset to: {output_file}")
+
+
 def main():
-    eedi_simulation()
+    eedi_oracle_simulation()
     # gpt_simulation()
 
 if __name__ == "__main__":

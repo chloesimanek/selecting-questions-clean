@@ -85,7 +85,7 @@ def run_unbiased(batch, config):
         final_accuracy = batch_accuracy(res['output'], batch)
         reward = final_accuracy - random_baseline
         memory.rewards.append(reward.to(device))
-        ppo_policy.update(memory)
+        ppo_policy.update(memory) # updating for unbiased 
         #
     else:
         with torch.no_grad():
@@ -118,7 +118,7 @@ def pick_biased_samples(batch, config):
             inner_algo(batch, config, new_params, create_graph=True)
             res = model(batch, config)
             loss = res['loss']
-            st_policy.update(loss)
+            st_policy.update(loss) # update biased policy 
     config['train_mask'] = env_states['train_mask']
     return
 
@@ -159,12 +159,16 @@ def run_random(batch, config):
     # Random pick once
     config['meta_param'] = new_params[0]
     if sampling == 'random':
-        model.pick_sample('random', config)
-        inner_algo(batch, config, new_params)
+        model.pick_sample('random', config) # pick_sample -> model.py & config -> # what questions are available, number of questions, and "largest" questions
+        inner_algo(batch, config, new_params) # update student specific response model
     if sampling == 'active':
         for _ in range(params.n_query):
             model.pick_sample('active', config)
             inner_algo(batch, config, new_params)
+    # ORACLE HERE
+    # if sampling == 'oracle':
+    #     model.pick_sample('oracle', config) 
+    #     inner_algo(batch, config, new_params)
 
     if config['mode'] == 'train':
         res = model(batch, config)
@@ -204,7 +208,7 @@ def train_model():
     val_score = sum(val_scores)/(len(N)+1e-20)
     val_auc = sum(val_aucs)/(len(N)+1e-20)
 
-    if best_val_score < val_score:
+    if best_val_score < val_score: 
         best_epoch = epoch
         best_val_score = val_score
         best_val_auc = val_auc
@@ -271,16 +275,6 @@ def test_model(id_, split='val'):
 
 if __name__ == "__main__":
     params = create_parser()
-
-    # save logs
-
-    # os.makedirs("logs", exist_ok=True)
-    # timestamp = time.strftime("%Y%m%d-%H%M%S")
-    # log_filename = f"logs/{params.model}_{params.dataset}_{timestamp}.log"
-    # sys.stdout = open(log_filename, "w")
-    # sys.stderr = sys.stdout
-
-    # print(f"Logging to {log_filename}")
 
     print(params)
     if params.use_cuda:
