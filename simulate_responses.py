@@ -172,9 +172,9 @@ def simulate_responses(num_student, question_per_student, question_df, skill_dis
 
     return df_final, df_student
  
-def load_eedi_df(metadata_file='eedi-data\question_metadata_task_3_4.csv',  
-                 questions_file='eedi-data\question_embeddings.csv',
-                 embeddings_file='eedi-data\mathbert_embeddings.csv'):
+def load_eedi_df(metadata_file='eedi\question_metadata_task_3_4.csv',  
+                 questions_file='eedi\question_embeddings.csv',
+                 embeddings_file='eedi\mathbert_embeddings.csv'):
     '''
     Load a df with all questions from the eedi data for which we have question embeddings,
     and generate random difficulties for each question. Return the df, which will also
