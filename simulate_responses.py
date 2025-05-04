@@ -318,6 +318,8 @@ def simulate_oracle_and_save(question_df, output_directory,
 # Filter for the columns you need
 def save_clean_oracle_data(df_responses, output_file='oracle_dataset.csv'):
     df_clean = df_responses[['studentid', 'itemid', 'item_difficulty', 'student_skill_level', 'correct']]
+    df_clean['diff'] = df_clean['item_difficulty'].sub(df_clean['student_skill_level']) 
+    print(df_clean.head)
     df_clean.to_csv(output_file, index=False)
     print(f"Saved clean oracle dataset to: {output_file}")
 
