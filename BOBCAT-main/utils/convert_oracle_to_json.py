@@ -1,8 +1,10 @@
+''' Convert data to JSON for BOBCAT '''
+
 import pandas as pd
 import json
 import os
 
-# Load the clean oracle dataset
+# Load the oracle dataset
 df = pd.read_csv('../responses/oracle_dataset.csv')  
 
 # Group data by user
