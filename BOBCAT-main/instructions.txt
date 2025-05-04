@@ -23,6 +23,7 @@ RUN
 
 run training (terminal)
     - e.g. python train.py --dataset assist2009 --model biirt-active --n_query 5 --neptune
+    - e.g. python3 train.py --dataset oracle --model biirt-random --n_query 1 --neptune
 
 AFTER
 

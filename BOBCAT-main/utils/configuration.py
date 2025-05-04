@@ -36,6 +36,13 @@ def create_parser():
     parser.add_argument('--neptune', action='store_true')
     params = parser.parse_args()
     #
+    if params.dataset == 'oracle':
+        params.n_question = 948
+        params.train_batch_size = 50
+        params.test_batch_size = 100
+        params.n_epoch = 100
+        params.wait = 50
+        params.repeat = 5
     if params.dataset == 'eedi-3':
         params.n_question = 948
         params.train_batch_size = 512

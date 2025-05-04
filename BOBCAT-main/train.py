@@ -346,7 +346,7 @@ if __name__ == "__main__":
             #     'biased_model_summary', repr(st_policy.policy))
 
     #
-    data_path = os.path.normpath('data/train_task_'+params.dataset+'.json')
+    data_path = os.path.normpath('data/train_task_'+params.dataset+'.json') # PATH TO DATA
     train_data, valid_data, test_data = data_split(
         data_path, params.fold,  params.seed)
     train_dataset, valid_dataset, test_dataset = Dataset(
