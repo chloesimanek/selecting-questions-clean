@@ -35,19 +35,19 @@ def create_parser():
     parser.add_argument('--save', action='store_true')
     parser.add_argument('--neptune', action='store_true')
     params = parser.parse_args()
-    #
-    if params.dataset == 'oracle':
-        params.n_question = 948
-        params.train_batch_size = 50
-        params.test_batch_size = 100
-        params.n_epoch = 100
-        params.wait = 50
-        params.repeat = 5
+    
     if params.dataset == 'eedi-3':
         params.n_question = 948
-        params.train_batch_size = 512
-        params.test_batch_size = 1000
-        params.n_epoch = 10000
+        params.train_batch_size = 512 # originally 512
+        params.test_batch_size = 1000 # originally 1000
+        params.n_epoch = 10000 # changed from 10000
+        params.wait = 1000
+        params.repeat = 5
+    if params.dataset == 'synthetic':
+        params.n_question = 948
+        params.train_batch_size = 512 # originally 512
+        params.test_batch_size = 1000 # originally 1000
+        params.n_epoch = 10000 # changed from 10000
         params.wait = 1000
         params.repeat = 5
     if params.dataset == 'eedi-1':
@@ -61,12 +61,12 @@ def create_parser():
         params.n_question = 26688
         params.train_batch_size = 128
         params.test_batch_size = 512
-        params.n_epoch = 1000
+        params.n_epoch = 5000
         params.wait = 250
         params.repeat = 10
     if params.dataset == 'ednet':
         params.n_question = 13169
-        params.n_epoch = 100
+        params.n_epoch = 500
         params.train_batch_size = 200
         params.test_batch_size = 512
         params.wait = 25

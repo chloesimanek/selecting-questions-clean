@@ -172,9 +172,9 @@ def simulate_responses(num_student, question_per_student, question_df, skill_dis
 
     return df_final, df_student
  
-def load_eedi_df(metadata_file='eedi\question_metadata_task_3_4.csv',  
-                 questions_file='eedi\question_embeddings.csv',
-                 embeddings_file='eedi\mathbert_embeddings.csv'):
+def load_eedi_df(metadata_file='eedi/question_metadata_task_3_4.csv',  
+                 questions_file='eedi/question_embeddings.csv',
+                 embeddings_file='eedi/mathbert_embeddings.csv'):
     '''
     Load a df with all questions from the eedi data for which we have question embeddings,
     and generate random difficulties for each question. Return the df, which will also
@@ -287,10 +287,10 @@ def eedi_oracle_simulation(num_students=500, min_questions_per_skill=20, max_que
     print("Number of unique skills: ", df['skill'].nunique())
     
     simulate_oracle_and_save(df, 'responses',
-                      num_students=500, 
-                      min_questions_per_skill=20, 
-                      max_questions_per_skill=110, 
-                      max_overall_skills=5,
+                      num_students=num_students, 
+                      min_questions_per_skill=min_questions_per_skill, 
+                      max_questions_per_skill=max_questions_per_skill, 
+                      max_overall_skills=max_overall_skills,
                       questions_per_student=100,
                       skill_distribution='normal')
 
@@ -318,12 +318,13 @@ def simulate_oracle_and_save(question_df, output_directory,
 # Filter for the columns you need
 def save_clean_oracle_data(df_responses, output_file='oracle_dataset.csv'):
     df_clean = df_responses[['studentid', 'itemid', 'item_difficulty', 'student_skill_level', 'correct']]
+    df_clean['diff'] = df_clean['item_difficulty'] - df_clean['student_skill_level']
     df_clean.to_csv(output_file, index=False)
     print(f"Saved clean oracle dataset to: {output_file}")
 
 
 def main():
-    eedi_oracle_simulation()
+    eedi_oracle_simulation(max_overall_skills=1)
     # gpt_simulation()
 
 if __name__ == "__main__":

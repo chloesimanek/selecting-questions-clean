@@ -38,14 +38,17 @@ def list_to_string(socres):
 def data_split(datapath, fold, seed):
     data = open_json(datapath)
     random.Random(seed).shuffle(data)
-    fields = ['q_ids',  'labels']  # 'ans', 'correct_ans',
+    # Include user_id in fields list to preserve it
+    fields = ['q_ids', 'labels', 'user_id', 'diffs']  # Added 'user_id' to preserve it
     del_fields = []
     for f in data[0]:
         if f not in fields:
             del_fields.append(f)
     for d in data:
         for f in fields:
-            d[f] = np.array(d[f])
+            # Only convert arrays to numpy arrays, not scalars like user_id
+            if f in ['q_ids', 'labels', 'diffs']:
+                d[f] = np.array(d[f])
         for f in del_fields:
             if f not in fields:
                 del d[f]

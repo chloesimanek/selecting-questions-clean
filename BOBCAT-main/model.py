@@ -20,6 +20,20 @@ def pick_random_sample(input_mask,n_query,n_question):
     train_mask = train_mask.scatter(dim=1, index=actions, value=1)
     return train_mask
 
+def pick_oracle_sample(diffs, input_mask, n_query, n_question):
+    '''IDEA: set train_mask = 1 at n_query locations where abs(diff) is the smallest and available_mask == 1'''
+    # itialize training mask with zeros 
+    train_mask = torch.zeros(input_mask.shape[0], n_question).long().to(device)
+    # take absolute value of differences
+    diffs = torch.abs(diffs)
+    # change unavialable questions in input_mask to 100 in DIFFS so we DON'T choose them during selection
+    diffs = diffs.masked_fill(input_mask == 0, int(100))
+    # select the smallest diffs 
+    actions = torch.topk(diffs, n_query, largest=False).indices 
+    # update to ones in training mask for selection 
+    train_mask = train_mask.scatter(dim=1, index=actions, value=1)
+    return train_mask
+
 def get_inputs(batch):
     input_labels = batch['input_labels'].to(device).float()
     input_mask = batch['input_mask'].to(device)
@@ -55,7 +69,7 @@ class MAMLModel(nn.Module):
         self.sigmoid = nn.Sigmoid()
         self.n_question = n_question
         self.question_dim = question_dim
-        if self.question_dim == 1:
+        if self.question_dim == 1: # only in irt
             self.question_difficulty = nn.Parameter(torch.zeros(question_dim,n_question))        
         if self.question_dim>1:
             self.layers = nn.Sequential(
@@ -81,9 +95,9 @@ class MAMLModel(nn.Module):
 
     def pick_sample(self,sampling, config):
         if sampling == 'random':
-            train_mask = pick_random_sample( # questions we are doing to train
-                config['available_mask'], self.n_query, self.n_question) # what questions are available, number of questions, and "largest" questions
-            config['train_mask'] = train_mask # config dictionary 
+            train_mask = pick_random_sample(
+                config['available_mask'], self.n_query, self.n_question)
+            config['train_mask'] = train_mask
             return train_mask
 
         elif sampling == 'active':
@@ -92,11 +106,13 @@ class MAMLModel(nn.Module):
             action = self.pick_uncertain_sample(student_embed, config['available_mask'])
             config['train_mask'][range(n_student), action], config['available_mask'][range(n_student), action] = 1, 0
             return action
-        
-        # ORACLE
 
-        # elif sampling == 'oracle'
-        # ...
+        elif sampling == 'oracle':
+            diffs = config['diffs']
+            input_mask = config['available_mask']
+            train_mask = pick_oracle_sample(diffs, input_mask, self.n_query, self.n_question)
+            config['train_mask'] = train_mask
+            return train_mask
         
 
     def forward(self, batch, config):
