@@ -51,6 +51,7 @@ class Dataset(data.Dataset):
 
 
 class collate_fn(object):
+    # merges a list of samples to form a mini-batch of Tensor(s)
     def __init__(self, n_question):
         self.n_question = n_question
 
@@ -77,7 +78,8 @@ class collate_fn(object):
             diffs[b_idx, batch[b_idx]['input_question'].long()] = batch[b_idx]['diffs'].float()
 
             user_ids.append(batch[b_idx].get('user_id', b_idx))  # Use batch index as fallback
-
+        
+        # BATCH
         output = {'input_labels': input_labels, 'input_mask': input_mask,
                   'output_labels': output_labels, 'output_mask': output_mask,
                   'user_ids': user_ids, 'diffs': diffs}  # Add user_ids to batch

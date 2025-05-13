@@ -290,12 +290,13 @@ def run_random(batch, config):
     
     # ORACLE 
     if sampling == 'oracle':
-        # set to batch
+        # batch to config to select questions from 
         config['diffs'] = batch['diffs'].to(device)
         # LOG CODE 
         if PRINT_QUESTION_SELECTION and config['mode'] == 'train':
             # Get current train_mask before selection
             prev_mask = config['train_mask'].clone()
+            # PICK SAMPLE HERE -> pick_oracle_sample
             model.pick_sample('oracle', config)
             # Find newly selected questions
             curr_mask = config['train_mask']

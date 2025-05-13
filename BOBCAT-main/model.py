@@ -21,13 +21,15 @@ def pick_random_sample(input_mask,n_query,n_question):
     return train_mask
 
 def pick_oracle_sample(diffs, input_mask, n_query, n_question):
-    '''IDEA: set train_mask = 1 at n_query locations where abs(diff) is the smallest and available_mask == 1'''
+    '''
+    Select the top n_query questions with the smallest diff
+    '''
     # itialize training mask with zeros 
     train_mask = torch.zeros(input_mask.shape[0], n_question).long().to(device)
     # take absolute value of differences
     diffs = torch.abs(diffs)
-    # change unavialable questions in input_mask to 100 in DIFFS so we DON'T choose them during selection
-    diffs = diffs.masked_fill(input_mask == 0, int(100))
+    # change unavialable questions in input_mask to inf in DIFFS so we DON'T choose them during selection
+    diffs = diffs.masked_fill(input_mask == 0, float('inf'))
     # select the smallest diffs 
     actions = torch.topk(diffs, n_query, largest=False).indices 
     # update to 1s in training mask for selection 
@@ -108,6 +110,9 @@ class MAMLModel(nn.Module):
             return action
 
         elif sampling == 'oracle':
+            '''
+            Use pick_oracle_sample and store training mask
+            '''
             # to config dictionary 
             diffs = config['diffs']
             input_mask = config['available_mask']
