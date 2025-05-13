@@ -18,7 +18,7 @@ best_val_auc, best_test_auc = 0, 0
 best_epoch = -1
 
 # LOG CODE: Added flag to control detailed logging of question selection process
-PRINT_QUESTION_SELECTION = True
+PRINT_QUESTION_SELECTION = False
 
 # Store the raw data for reference to original user_ids and q_ids
 raw_train_data = None
@@ -290,6 +290,7 @@ def run_random(batch, config):
     
     # ORACLE 
     if sampling == 'oracle':
+        # set to batch
         config['diffs'] = batch['diffs'].to(device)
         # LOG CODE 
         if PRINT_QUESTION_SELECTION and config['mode'] == 'train':
@@ -304,25 +305,34 @@ def run_random(batch, config):
             n_students = len(batch['input_labels'])
 
             for student_idx in range(2):  # Print 2 students
-                selected_qs = torch.where((curr_mask[student_idx] == 1) & (prev_mask[student_idx] == 0))[0].cpu().numpy() # Were 0 -> NOW 1 (SELECTED)
+                # WAS 0 -> NOW 1 (SELECTED)
+                selected_qs = torch.where((curr_mask[student_idx] == 1) & (prev_mask[student_idx] == 0))[0].cpu().numpy() 
                 if len(selected_qs) > 0:
                     # Get actual student ID
                     actual_student_id = get_actual_student_id(batch_idx, student_idx)
 
                     print(f"\nStudent {student_idx+1} (ID: {actual_student_id}) oracle questions:")
-                    diffs_row = diffs[student_idx].detach().cpu()
-                    input_mask_row = input_mask[student_idx].detach().cpu()
+                    diffs_info = diffs[student_idx].detach().cpu()
+                    input_mask_info = input_mask[student_idx].detach().cpu()
                     
                     # For each selected question, print ID and absolute diff
+                    diffs_chosen = []
                     for q in selected_qs:
-                        diff_val = diffs_row[q].item()
-                        print(f"  Question {q} (abs(diff) = {diff_val:.4f})")
+                        d = diffs_info[q].item()
+                        diffs_chosen.append(d)
+                        print(f"  Question {q} difference = {d:.4f})")
 
-                    # Show min abs(diff) of all available questions to validate oracle selection
-                    available_diffs = torch.abs(diffs_row[input_mask_row == 1])
+                    # Show min abs(diff) of all available questions 
+                    available_diffs = torch.abs(diffs_info[input_mask_info == 1])
                     if len(available_diffs) > 0:
                         min_diff = available_diffs.min().item()
-                        print(f"  -> Minimum available abs(diff): {min_diff:.4f}")
+                        print(f"Minimum available difference: {min_diff:.4f}")
+
+                    # Ensure min abs(diff) was chosen
+                    if min_diff in diffs_chosen:
+                        print('Chosen: YES')
+                    else:
+                        print('Chosen: NO')
 
         else:
             model.pick_sample('oracle', config)
@@ -332,9 +342,6 @@ def run_random(batch, config):
         # config['diffs'] = batch['diffs'].to(device)
         # model.pick_sample('oracle', config)
         # inner_algo(batch, config, new_params)
-        
-        
-
 
     # LOG CODE: Added extensive logging for active selection
     if sampling == 'active':

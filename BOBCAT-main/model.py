@@ -30,7 +30,7 @@ def pick_oracle_sample(diffs, input_mask, n_query, n_question):
     diffs = diffs.masked_fill(input_mask == 0, int(100))
     # select the smallest diffs 
     actions = torch.topk(diffs, n_query, largest=False).indices 
-    # update to ones in training mask for selection 
+    # update to 1s in training mask for selection 
     train_mask = train_mask.scatter(dim=1, index=actions, value=1)
     return train_mask
 
@@ -108,12 +108,12 @@ class MAMLModel(nn.Module):
             return action
 
         elif sampling == 'oracle':
+            # to config dictionary 
             diffs = config['diffs']
             input_mask = config['available_mask']
             train_mask = pick_oracle_sample(diffs, input_mask, self.n_query, self.n_question)
             config['train_mask'] = train_mask
             return train_mask
-        
 
     def forward(self, batch, config):
         #get inputs
