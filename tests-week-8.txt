@@ -53,7 +53,7 @@ if oracle does better (compared "good" data -> run rest of tests with this data 
 72 | python train.py --dataset synthetic --model biirt-random --n_query 10 --neptune
 73 | python train.py --dataset synthetic --model biirt-oracle --n_query 10 --neptune
 *** python train.py --dataset synthetic --model biirt-active --n_query 10 --neptune
-*** python train.py --dataset synthetic --model biirt-bad --n_query 10 --neptune
+74 | python train.py --dataset synthetic --model biirt-bad --n_query 10 --neptune
 
 *** python train.py --dataset synthetic --model biirt-random --n_query 20 --neptune
 *** python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
