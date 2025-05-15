@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 # Sample data
 data = {
     "Model": [
+        "biirt-bad", # 1, 0.7008
         "biirt-random", # 2
         "biirt-active", # 2
         "biirt-oracle", # 2
@@ -14,8 +15,8 @@ data = {
         "biirt-active", # 10
         "biirt-oracle" # 10
     ],
-    "Questions": [2, 2, 2, 5, 5, 5, 10, 10, 10],
-    "Test Accuracy": [0.72, 0.74, 0.75, 0.73, 0.74, 0.75, 0.73, 0.74, 0.75]
+    "Questions": [1, 2, 2, 2, 5, 5, 5, 10, 10, 10],
+    "Test Accuracy": [0.7008, 0.72, 0.74, 0.75, 0.73, 0.74, 0.75, 0.73, 0.74, 0.75]
 }
 
 df = pd.DataFrame(data)
