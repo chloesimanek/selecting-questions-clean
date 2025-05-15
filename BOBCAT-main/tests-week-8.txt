@@ -24,6 +24,10 @@ Weds, May 14th
 65 | python train.py --dataset synthetic --model biirt-active --n_query 1 --neptune
 66 | python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
 
+Thurs, May 15th
+* | python train.py --dataset low --model biirt-oracle --n_query 1 --neptune
+python train.py --dataset low --model biirt-random --n_query 1 --neptune
+
 *** python train.py --dataset synthetic --model biirt-random --n_query 1 --neptune
 *** python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
 *** python train.py --dataset synthetic --model biirt-active --n_query 1 --neptune

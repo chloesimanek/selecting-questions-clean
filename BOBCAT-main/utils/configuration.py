@@ -50,6 +50,13 @@ def create_parser():
         params.n_epoch = 10000 # changed from 10000
         params.wait = 1000
         params.repeat = 5
+    if params.dataset == 'low':
+        params.n_question = 948
+        params.train_batch_size = 512 # originally 512
+        params.test_batch_size = 1000 # originally 1000
+        params.n_epoch = 10000 # changed from 10000
+        params.wait = 1000
+        params.repeat = 5
     if params.dataset == 'eedi-1':
         params.n_question = 27613
         params.n_epoch = 750

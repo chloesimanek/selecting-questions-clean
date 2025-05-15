@@ -40,7 +40,7 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
     np.random.seed(8080)
     
     # Generate student abilities for each skill
-    student_thetas = np.random.normal(2, 1, (n_students, n_skills))
+    student_thetas = np.random.normal(1, 0, (n_students, n_skills)) # Lower ability
     
     # Add correlation between skills (students good at one skill tend to be good at others)
     skill_correlation = 0.5
@@ -51,7 +51,7 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
     # Generate base difficulties for each skill
     skill_difficulties = []
     for i in range(n_skills):
-        mu = np.random.uniform(-0.5, 0.5)  # Skill-specific mean difficulty
+        mu = np.random.uniform(-0.5, 0.5)  # Skill-specific mean difficulty 
         sigma = np.random.uniform(0.8, 1.2)  # Skill-specific spread
         skill_difficulties.append((mu, sigma))
     
@@ -107,6 +107,9 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
             p = proba(student_abilities[skill_id], difficulty)
 
             correct = np.random.random() < p
+            noise_rate = 0.25
+            if np.random.random() < noise_rate:
+                correct = not correct
             labels.append(1 if correct else 0)
             
             # Calculate and store the difference between student ability and question difficulty
@@ -137,6 +140,10 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
             # Calculate probability of correct answer
             p = proba(student_abilities[skill_id], difficulty)
             correct = np.random.random() < p
+
+            noise_rate = 0.35  # Adjust as needed
+            if np.random.random() < noise_rate:
+                correct = not correct  # Flip the label
             
             response_data = {
                 'user_id': s,
@@ -164,7 +171,7 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
     # Save detailed responses to CSV
     output_dir = "data/synthetic"
     os.makedirs(output_dir, exist_ok=True)
-    detailed_responses_df.to_csv(os.path.join(output_dir, 'noise_df.csv'), index=False)
+    detailed_responses_df.to_csv(os.path.join(output_dir, 'bad-noise_df.csv'), index=False)
     
     # Fixed: No need to modify 'diffs' in train_data
     
@@ -188,7 +195,7 @@ def save_synthetic_data(synthetic_data, output_dir="data/synthetic"):
     os.makedirs(output_dir, exist_ok=True)
     
     # Save JSON formatted data for BOBCAT
-    json_path = os.path.join(output_dir, "synthetic_train_data.json")
+    json_path = os.path.join(output_dir, "bad-synthetic_train_data.json")
     with open(json_path, 'w') as f:
         json.dump(synthetic_data['train_data'], f)
     
@@ -204,7 +211,7 @@ def save_synthetic_data(synthetic_data, output_dir="data/synthetic"):
         student_data.append(student_row)
     
     student_df = pd.DataFrame(student_data)
-    student_df.to_csv(os.path.join(output_dir, "synthetic_students.csv"), index=False)
+    student_df.to_csv(os.path.join(output_dir, "bad-synthetic_students.csv"), index=False)
     
     # Save question parameters
     question_rows = []
@@ -216,13 +223,13 @@ def save_synthetic_data(synthetic_data, output_dir="data/synthetic"):
         })
     
     question_df = pd.DataFrame(question_rows)
-    question_df.to_csv(os.path.join(output_dir, "synthetic_questions.csv"), index=False)
+    question_df.to_csv(os.path.join(output_dir, "bad-synthetic_questions.csv"), index=False)
     
     # Save skill parameters
     skill_df = pd.DataFrame(synthetic_data['skill_difficulties'], 
                           columns=['mean_difficulty', 'std_difficulty'])
     skill_df['skill_id'] = range(len(synthetic_data['skill_difficulties']))
-    skill_df.to_csv(os.path.join(output_dir, "synthetic_skills.csv"), index=False)
+    skill_df.to_csv(os.path.join(output_dir, "bad-synthetic_skills.csv"), index=False)
     
     # Save model parameters
     model_params = {
@@ -233,7 +240,7 @@ def save_synthetic_data(synthetic_data, output_dir="data/synthetic"):
         'avg_difficulty': float(np.mean([q['difficulty'] for q in synthetic_data['question_data']]))
     }
     
-    with open(os.path.join(output_dir, "synthetic_model_params.json"), 'w') as f:
+    with open(os.path.join(output_dir, "bad-synthetic_model_params.json"), 'w') as f:
         json.dump(model_params, f)
     
     print(f"Synthetic data saved to {output_dir}")
