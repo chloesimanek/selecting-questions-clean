@@ -40,7 +40,7 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
     np.random.seed(8080)
     
     # Generate student abilities for each skill
-    student_thetas = np.random.normal(0, 1, (n_students, n_skills))
+    student_thetas = np.random.normal(2, 1, (n_students, n_skills))
     
     # Add correlation between skills (students good at one skill tend to be good at others)
     skill_correlation = 0.5
@@ -96,6 +96,7 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
         # Generate responses
         q_ids = q_indices.tolist()
         labels = []
+        diffs = []  # New list to store the differences
         
         for q in q_indices:
             q_data = question_data[q]
@@ -104,23 +105,29 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
             
             # Calculate probability of correct answer
             p = proba(student_abilities[skill_id], difficulty)
+
             correct = np.random.random() < p
             labels.append(1 if correct else 0)
+            
+            # Calculate and store the difference between student ability and question difficulty
+            diff = float(student_abilities[skill_id] - difficulty)
+            diffs.append(diff)
         
         # Create student data entry
         student_data = {
             'user_id': int(s),
             'q_ids': q_ids,
-            'labels': labels
+            'labels': labels,
+            'diffs': diffs  # Add the differences to the output
         }
         
         train_data.append(student_data)
     
     # Detailed response data for analysis
-    detailed_responses = {}
+    detailed_responses = []
+
     for s in range(n_students):
         student_abilities = student_thetas[s]
-        student_responses = {}
         
         for q in range(n_questions):
             q_data = question_data[q]
@@ -131,13 +138,35 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
             p = proba(student_abilities[skill_id], difficulty)
             correct = np.random.random() < p
             
-            student_responses[q] = {
+            response_data = {
+                'user_id': s,
+                'question_id': q,
                 'correct': 1 if correct else 0,
-                'probability': float(p),
-                'skill': skill_id
+                'probability': p,
+                'student_ability': student_abilities[skill_id],
+                'skill': skill_id,
+                'difficulty': difficulty,
+                'diff': student_abilities[skill_id] - difficulty  # Also add diff here
             }
-        
-        detailed_responses[s] = student_responses
+            
+            detailed_responses.append(response_data)
+
+    # Create DataFrame from detailed responses
+    detailed_responses_df = pd.DataFrame.from_records(detailed_responses)
+    
+    # avg_abs_diff = (detailed_responses_df['correct'] - detailed_responses_df['probability']).abs().mean()
+    # print(f"Average absolute difference between probability and correct: {avg_abs_diff}")
+    
+    # Calculate and print the false positive and false negative rate
+    fp_fn_rate = (detailed_responses_df['correct'].round() - detailed_responses_df['probability']).abs().mean()
+    print(f"False positive + false negative rate: {fp_fn_rate}")
+    
+    # Save detailed responses to CSV
+    output_dir = "data/synthetic"
+    os.makedirs(output_dir, exist_ok=True)
+    detailed_responses_df.to_csv(os.path.join(output_dir, 'noise_df.csv'), index=False)
+    
+    # Fixed: No need to modify 'diffs' in train_data
     
     # Return complete synthetic data
     return {
@@ -145,7 +174,7 @@ def generate_synthetic_data(n_students=6400, n_questions=948, n_skills=1):
         'question_data': question_data,
         'skill_difficulties': skill_difficulties,
         'train_data': train_data,
-        'detailed_responses': detailed_responses
+        'detailed_responses_df': detailed_responses_df
     }
 
 def save_synthetic_data(synthetic_data, output_dir="data/synthetic"):
@@ -223,14 +252,14 @@ def oracle_questions(student_data, question_data, n_questions=20):
     Returns:
         Dictionary mapping student IDs to their optimal question sets
     """
-    
+    pass  # Implementation to be added later
 
 if __name__ == "__main__":
     # Generate synthetic data
     synthetic_data = generate_synthetic_data(
         n_students=6400, 
         n_questions=948, 
-        n_skills=10
+        n_skills=1
     )
     
     # Save the data
@@ -240,4 +269,5 @@ if __name__ == "__main__":
     print(f"  - {len(synthetic_data['student_abilities'])} students")
     print(f"  - {len(synthetic_data['question_data'])} questions")
     print(f"  - {synthetic_data['student_abilities'].shape[1]} skills")
-    print(f"  - Average student ability: {np.mean(synthetic_data['student_abilities']):.4f}") # to 4 dp
+    print(f"  - Average student ability: {np.mean(synthetic_data['student_abilities']):.4f}")  # to 4 dp
+    
