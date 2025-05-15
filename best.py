@@ -11,7 +11,7 @@ Calculate the theoretical best prediction accuracy.
         - e.g. correct = 1 -> 1 --- (1-0.8) = 0.2 ****** CORRECT is already 1 or 0 
 '''
 
-df = pd.read_csv("data/synthetic/bad-noise_df.csv")
+df = pd.read_csv("data/synthetic/low-best/bad_noise_df.csv")
 
 
 theoretical_best = (df['probability'].round() == df['correct']).mean()

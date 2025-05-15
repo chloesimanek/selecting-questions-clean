@@ -1,14 +1,24 @@
-DATA -> train_task_synthetic.json
+DATA
 
+train_task_synthetic.json
 
 Mean error: 0.672
 Theoretical best prediction: 0.757588
-
 Generated synthetic data with:
   - 6400 students
   - 948 questions
   - 1 skills
   - Average student ability: 1.0146
+
+train_task_low.json
+
+Mean error: 0.461
+Theoretical best prediction: 0.565836
+Generated synthetic data with:
+  - 6400 students
+  - 948 questions
+  - 1 skills
+  - Average student ability: 0.5134
 
 
 ------------------------------------------------------------------------------------
@@ -16,21 +26,29 @@ Generated synthetic data with:
 TESTS
 
 Weds, May 14th 
+
+notes: test run, decidied to move to 1 question for consistency with paper
+
 61 | python train.py --dataset synthetic --model biirt-random --n_query 2 --neptune
 62 | python train.py --dataset synthetic --model biirt-active --n_query 2 --neptune
-----
+
+notes: n_query = 1
+
 63 | python train.py --dataset synthetic --model biirt-bad --n_query 1 --neptune
-64 | python train.py --dataset synthetic --model biirt-random --n_query 1 --neptune
-65 | python train.py --dataset synthetic --model biirt-active --n_query 1 --neptune
-66 | python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
+67 | python train.py --dataset synthetic --model biirt-random --n_query 1 --neptune
+68 | python train.py --dataset synthetic --model biirt-active --n_query 1 --neptune
+69 | python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
 
 Thurs, May 15th
-* | python train.py --dataset low --model biirt-oracle --n_query 1 --neptune
-python train.py --dataset low --model biirt-random --n_query 1 --neptune
 
-*** python train.py --dataset synthetic --model biirt-random --n_query 1 --neptune
-*** python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
-*** python train.py --dataset synthetic --model biirt-active --n_query 1 --neptune
+notes: tests with data that is "not as good"
+
+if oracle does better (compared "good" data -> run rest of tests with this data (?), else run with "good" data)
+
+70 | python train.py --dataset low --model biirt-random --n_query 1 --neptune
+71 | python train.py --dataset low --model biirt-oracle --n_query 1 --neptune
+*  | python train.py --dataset low --model biirt-bad --n_query 1 --neptune
+*  | python train.py --dataset low --model biirt-active --n_query 1 --neptune
 
 *** python train.py --dataset synthetic --model biirt-random --n_query 10 --neptune
 *** python train.py --dataset synthetic --model biirt-oracle --n_query 10 --neptune
