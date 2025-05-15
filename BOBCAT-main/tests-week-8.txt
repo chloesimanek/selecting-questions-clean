@@ -12,16 +12,17 @@ Generated synthetic data with:
 
 
 ------------------------------------------------------------------------------------
+
 TESTS
 
 Weds, May 14th 
 61 | python train.py --dataset synthetic --model biirt-random --n_query 2 --neptune
 62 | python train.py --dataset synthetic --model biirt-active --n_query 2 --neptune
-
+----
 63 | python train.py --dataset synthetic --model biirt-bad --n_query 1 --neptune
-
-*** python train.py --dataset synthetic --model biirt-oracle --n_query 2 --neptune
-
+64 | python train.py --dataset synthetic --model biirt-random --n_query 1 --neptune
+65 | python train.py --dataset synthetic --model biirt-active --n_query 1 --neptune
+66 | python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
 
 *** python train.py --dataset synthetic --model biirt-random --n_query 1 --neptune
 *** python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
@@ -38,3 +39,5 @@ Weds, May 14th
 *** python train.py --dataset synthetic --model biirt-random --n_query 5 --neptune
 *** python train.py --dataset synthetic --model biirt-oracle --n_query 5 --neptune
 *** python train.py --dataset synthetic --model biirt-active --n_query 5 --neptune
+
+
