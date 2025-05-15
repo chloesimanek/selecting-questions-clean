@@ -36,6 +36,17 @@ def pick_oracle_sample(diffs, input_mask, n_query, n_question):
     train_mask = train_mask.scatter(dim=1, index=actions, value=1)
     return train_mask
 
+def pick_bad_sample(diffs, input_mask, n_query, n_question):
+    '''
+    Select the top n_query questions with the smallest diff
+    '''
+    train_mask = torch.zeros(input_mask.shape[0], n_question).long().to(device)
+    diffs = torch.abs(diffs)
+    diffs = diffs.masked_fill(input_mask == 0, float(-1))
+    actions = torch.topk(diffs, n_query, largest=True).indices 
+    train_mask = train_mask.scatter(dim=1, index=actions, value=1)
+    return train_mask
+
 def get_inputs(batch):
     input_labels = batch['input_labels'].to(device).float()
     input_mask = batch['input_mask'].to(device)
@@ -117,6 +128,13 @@ class MAMLModel(nn.Module):
             diffs = config['diffs']
             input_mask = config['available_mask']
             train_mask = pick_oracle_sample(diffs, input_mask, self.n_query, self.n_question)
+            config['train_mask'] = train_mask
+            return train_mask
+        
+        elif sampling == 'bad':
+            diffs = config['diffs']
+            input_mask = config['available_mask']
+            train_mask = pick_bad_sample(diffs, input_mask, self.n_query, self.n_question)
             config['train_mask'] = train_mask
             return train_mask
 

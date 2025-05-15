@@ -1,0 +1,40 @@
+DATA -> train_task_synthetic.json
+
+
+Mean error: 0.672
+Theoretical best prediction: 0.757588
+
+Generated synthetic data with:
+  - 6400 students
+  - 948 questions
+  - 1 skills
+  - Average student ability: 1.0146
+
+
+------------------------------------------------------------------------------------
+TESTS
+
+Weds, May 14th 
+61 | python train.py --dataset synthetic --model biirt-random --n_query 2 --neptune
+62 | python train.py --dataset synthetic --model biirt-active --n_query 2 --neptune
+
+63 | python train.py --dataset synthetic --model biirt-bad --n_query 1 --neptune
+
+*** python train.py --dataset synthetic --model biirt-oracle --n_query 2 --neptune
+
+
+*** python train.py --dataset synthetic --model biirt-random --n_query 1 --neptune
+*** python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
+*** python train.py --dataset synthetic --model biirt-active --n_query 1 --neptune
+
+*** python train.py --dataset synthetic --model biirt-random --n_query 10 --neptune
+*** python train.py --dataset synthetic --model biirt-oracle --n_query 10 --neptune
+*** python train.py --dataset synthetic --model biirt-active --n_query 10 --neptune
+
+*** python train.py --dataset synthetic --model biirt-random --n_query 20 --neptune
+*** python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
+*** python train.py --dataset synthetic --model biirt-active --n_query 20 --neptune
+
+*** python train.py --dataset synthetic --model biirt-random --n_query 5 --neptune
+*** python train.py --dataset synthetic --model biirt-oracle --n_query 5 --neptune
+*** python train.py --dataset synthetic --model biirt-active --n_query 5 --neptune

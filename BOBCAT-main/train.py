@@ -343,6 +343,53 @@ def run_random(batch, config):
         # config['diffs'] = batch['diffs'].to(device)
         # model.pick_sample('oracle', config)
         # inner_algo(batch, config, new_params)
+    
+    elif sampling == 'bad':
+        # batch to config to select questions from
+        config['diffs'] = batch['diffs'].to(device)
+
+        # LOG CODE
+        if PRINT_QUESTION_SELECTION and config['mode'] == 'train':
+            prev_mask = config['train_mask'].clone()
+
+            # PICK SAMPLE HERE -> pick_bad_sample
+            model.pick_sample('bad', config)
+
+            curr_mask = config['train_mask']
+            diffs = torch.abs(config['diffs'])
+            input_mask = config['available_mask']
+            n_students = len(batch['input_labels'])
+
+            for student_idx in range(2):  # Print 2 students
+                selected_qs = torch.where((curr_mask[student_idx] == 1) & (prev_mask[student_idx] == 0))[0].cpu().numpy()
+                if len(selected_qs) > 0:
+                    actual_student_id = get_actual_student_id(batch_idx, student_idx)
+
+                    print(f"\nStudent {student_idx+1} (ID: {actual_student_id}) BAD questions:")
+                    diffs_info = diffs[student_idx].detach().cpu()
+                    input_mask_info = input_mask[student_idx].detach().cpu()
+
+                    diffs_chosen = []
+                    for q in selected_qs:
+                        d = diffs_info[q].item()
+                        diffs_chosen.append(d)
+                        print(f"  Question {q} difference = {d:.4f}")
+
+                    # Show max abs(diff) of all available questions
+                    available_diffs = torch.abs(diffs_info[input_mask_info == 1])
+                    if len(available_diffs) > 0:
+                        max_diff = available_diffs.max().item()
+                        print(f"Maximum available difference: {max_diff:.4f}")
+
+                    if max_diff in diffs_chosen:
+                        print('Chosen: YES')
+                    else:
+                        print('Chosen: NO')
+        else:
+            model.pick_sample('bad', config)
+
+        inner_algo(batch, config, new_params)
+
 
     # LOG CODE: Added extensive logging for active selection
     if sampling == 'active':
