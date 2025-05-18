@@ -70,10 +70,10 @@ Sun, May 19th
 
 * back to oracle * 
 
-85 | python train.py --dataset synthetic --model biirt-random --n_query 20 --neptune
-86 | python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
-87 | python train.py --dataset synthetic --model biirt-active --n_query 20 --neptune
-88 | python train.py --dataset synthetic --model biirt-bad --n_query 20 --neptune
+8* | python train.py --dataset synthetic --model biirt-random --n_query 20 --neptune
+8* | python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
+86 | python train.py --dataset synthetic --model biirt-active --n_query 20 --neptune
+85 | python train.py --dataset synthetic --model biirt-bad --n_query 20 --neptune
 
 * biased, unbiased *
 
