@@ -294,10 +294,12 @@ def run_random(batch, config):
         config['diffs'] = batch['diffs'].to(device)
         # LOG CODE 
         if PRINT_QUESTION_SELECTION and config['mode'] == 'train':
+            # print("train")
             # Get current train_mask before selection
             prev_mask = config['train_mask'].clone()
             # PICK SAMPLE HERE -> pick_oracle_sample
-            model.pick_sample('oracle', config)
+            # model.pick_sample('oracle', config)
+            model.pick_sample('random', config)
             # Find newly selected questions
             curr_mask = config['train_mask']
             diffs = torch.abs(config['diffs']) 
@@ -336,6 +338,7 @@ def run_random(batch, config):
                         print('Chosen: NO')
 
         else:
+            # print("test")
             model.pick_sample('oracle', config)
 
         inner_algo(batch, config, new_params)
