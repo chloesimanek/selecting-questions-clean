@@ -59,30 +59,32 @@ Sat, May 17th
 78 | python train.py --dataset synthetic --model biirt-active --n_query 5 --neptune
 79 | python train.py --dataset synthetic --model biirt-bad --n_query 5 --neptune
 
-Sun, May 19th 
+Mon, May 19th 
+- Sun tests early stop
 
 * random train oracle test * 
 
-81 | python train.py --dataset synthetic --model biirt-oracle --n_query 5 --neptune
-82 | python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
-83 | python train.py --dataset synthetic --model biirt-oracle --n_query 10 --neptune
-84 | python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
+87 | python train.py --dataset synthetic --model biirt-oracle --n_query 5 --neptune
+88 | python train.py --dataset synthetic --model biirt-oracle --n_query 1 --neptune
+89 | python train.py --dataset synthetic --model biirt-oracle --n_query 10 --neptune
+
+** | python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
 
 * back to oracle * 
 
-8* | python train.py --dataset synthetic --model biirt-random --n_query 20 --neptune
-8* | python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
-86 | python train.py --dataset synthetic --model biirt-active --n_query 20 --neptune
-85 | python train.py --dataset synthetic --model biirt-bad --n_query 20 --neptune
+** | python train.py --dataset synthetic --model biirt-random --n_query 20 --neptune
+** | python train.py --dataset synthetic --model biirt-oracle --n_query 20 --neptune
+** | python train.py --dataset synthetic --model biirt-active --n_query 20 --neptune
+** | python train.py --dataset synthetic --model biirt-bad --n_query 20 --neptune
 
 * biased, unbiased *
 
-85 | python train.py --dataset synthetic --model biirt-biased --n_query 1 --neptune
-86 | python train.py --dataset synthetic --model biirt-biased --n_query 5 --neptune
-87 | python train.py --dataset synthetic --model biirt-biased --n_query 10 --neptune
-88 | python train.py --dataset synthetic --model biirt-biased --n_query 20 --neptune
+** | python train.py --dataset synthetic --model biirt-biased --n_query 1 --neptune
+** | python train.py --dataset synthetic --model biirt-biased --n_query 5 --neptune
+** | python train.py --dataset synthetic --model biirt-biased --n_query 10 --neptune
+** | python train.py --dataset synthetic --model biirt-biased --n_query 20 --neptune
 
-89 | python train.py --dataset synthetic --model biirt-unbiased --n_query 1 --neptune
-90 | python train.py --dataset synthetic --model biirt-unbiased --n_query 5 --neptune
-91 | python train.py --dataset synthetic --model biirt-unbiased --n_query 10 --neptune
-92 | python train.py --dataset synthetic --model biirt-unbiased --n_query 20 --neptune
+** | python train.py --dataset synthetic --model biirt-unbiased --n_query 1 --neptune
+** | python train.py --dataset synthetic --model biirt-unbiased --n_query 5 --neptune
+** | python train.py --dataset synthetic --model biirt-unbiased --n_query 10 --neptune
+** | python train.py --dataset synthetic --model biirt-unbiased --n_query 20 --neptune
