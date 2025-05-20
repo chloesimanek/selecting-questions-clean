@@ -264,8 +264,11 @@ def run_random(batch, config):
     # Random pick once
 
     if sampling == 'random':
+        # config['diffs'] = batch['diffs'].to(device)
         # LOG CODE
         if PRINT_QUESTION_SELECTION and config['mode'] == 'train':
+            config['diffs'] = batch['diffs'].to(device)
+
             # Get current train_mask before selection
             prev_mask = config['train_mask'].clone()
             model.pick_sample('random', config)
@@ -298,8 +301,8 @@ def run_random(batch, config):
             # Get current train_mask before selection
             prev_mask = config['train_mask'].clone()
             # PICK SAMPLE HERE -> pick_oracle_sample
-            # model.pick_sample('oracle', config)
-            model.pick_sample('random', config)
+            model.pick_sample('oracle', config)
+            # model.pick_sample('random', config)
             # Find newly selected questions
             curr_mask = config['train_mask']
             diffs = torch.abs(config['diffs']) 

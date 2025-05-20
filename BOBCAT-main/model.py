@@ -74,6 +74,7 @@ def normalize_loss(output, labels, mask):
     loss = 10. * torch.sum(loss, dim =-1)/count
     return loss.sum()
 
+
 class MAMLModel(nn.Module):
     def __init__(self, n_question,question_dim =1,dropout=0.2, sampling='active', n_query=10):
         super().__init__()
@@ -84,12 +85,13 @@ class MAMLModel(nn.Module):
         self.question_dim = question_dim
         if self.question_dim == 1: # only in irt
             self.question_difficulty = nn.Parameter(torch.zeros(question_dim,n_question))        
+            # self.question_difficulty = nn.Parameter(torch.FloatTensor(1, n_question).uniform_(-2, 2))
         if self.question_dim>1:
             self.layers = nn.Sequential(
                 nn.Linear(self.question_dim, 256), nn.ReLU(
                 ), nn.Dropout(dropout))
             self.output_layer = nn.Linear(256, self.n_question)
-        
+    
     def reset(self, batch):
         input_labels, _, input_mask = get_inputs(batch)
         obs_state = ((input_labels-0.5)*2.)  # B, 948
@@ -107,11 +109,14 @@ class MAMLModel(nn.Module):
         return state
 
     def pick_sample(self,sampling, config):
+
+
         if sampling == 'random':
             train_mask = pick_random_sample(
                 config['available_mask'], self.n_query, self.n_question)
             config['train_mask'] = train_mask
             return train_mask
+            
 
         elif sampling == 'active':
             student_embed = config['meta_param']
